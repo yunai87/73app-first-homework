@@ -3,6 +3,7 @@ import {
   Image,
   ImageSourcePropType,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -29,6 +30,32 @@ const navIconMap: Record<
     active: require("../images/icon_mybook_actived.png"),
   },
 };
+
+const popularBooks: Array<{
+  id: string;
+  title: string;
+  author: string;
+  cover: ImageSourcePropType;
+}> = [
+  {
+    id: "book-1",
+    title: "Fashionopolis",
+    author: "Dana Thomas",
+    cover: require("../images/1.png"),
+  },
+  {
+    id: "book-2",
+    title: "Chanel",
+    author: "Patrick Mauries",
+    cover: require("../images/2.png"),
+  },
+  {
+    id: "book-3",
+    title: "Calligraphy",
+    author: "June & Lucy",
+    cover: require("../images/3.png"),
+  },
+];
 
 export default function Index() {
   const insets = useSafeAreaInsets();
@@ -73,8 +100,36 @@ export default function Index() {
 
       <View style={styles.middleContainer}>
         <View style={styles.content}>
-          <View style={styles.textBox}>
+          <View style={styles.textBox_1}>
             <Text style={styles.title}>Popular Books</Text>
+          </View>
+          <View style={styles.bookcontainer_1}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.bookListContent}
+            >
+              {popularBooks.map((book, index) => (
+                <View
+                  key={book.id}
+                  style={[styles.bookCard, index === popularBooks.length - 1 && styles.bookCardLast]}
+                >
+                  <Image source={book.cover} style={styles.bookCover} />
+                  <Text style={styles.bookTitle} numberOfLines={1}>
+                    {book.title}
+                  </Text>
+                  <Text style={styles.bookAuthor} numberOfLines={1}>
+                    {book.author}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+          <View style={styles.textBox_2}>
+            <Text style={styles.title}>Newest</Text>
+          </View>
+          <View style={styles.bookcontainer_2}>
+            {/* Add your content here */}
           </View>
         </View>
       </View>
@@ -153,18 +208,59 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "stretch",
-    paddingTop: 8,
-    paddingHorizontal: 20,
     gap: 16,
   },
-  textBox: {
-    padding: 0,
+  textBox_1: {
+    marginTop: 8,
+    marginHorizontal: 20,
   },
+  textBox_2: {
+    marginHorizontal: 20,
+  },
+
   title: {
     fontSize: 24,
     fontWeight: "500",
     fontFamily:"Roboto",
     color: "#333333",
+  },
+  bookcontainer_1: {
+    height: 256,
+  },
+  bookListContent: {
+    paddingHorizontal: 20,
+  },
+  bookCard: {
+    width: 140,
+    height: 256,
+    borderRadius: 8,
+    padding: 8,
+    marginRight: 16,
+  },
+  bookCardLast: {
+    marginRight: 0,
+  },
+  bookCover: {
+    width: "100%",
+    height: 192,
+    borderRadius: 6,
+  },
+  bookTitle: {
+    marginTop: 16,
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#131313",
+  },
+  bookAuthor: {
+    marginTop: 8,
+    fontSize: 12,
+    opacity: 0.5,
+    color: "#777777",
+    fontWeight: "500",
+  },
+  bookcontainer_2: {
+    height: 279,
+    backgroundColor: "#00ff00",
   },
   bottomBar: {
     
@@ -184,7 +280,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   navItemPressed: {
-    opacity: 0.7,
+    opacity: 0.9,
   },
   navIcon: {
     width: 25,
