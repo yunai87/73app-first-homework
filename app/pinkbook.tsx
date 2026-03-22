@@ -4,6 +4,7 @@ import {
   Image,
   ImageSourcePropType,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -75,13 +76,50 @@ export default function BlankScreen() {
         </View>
       </View>
 
-      <View style={styles.middleContainer}>
+      <ScrollView
+        style={styles.middleContainer}
+        contentContainerStyle={[
+          styles.middleContent,
+          { paddingBottom: Math.max(insets.bottom + 120, 140) },
+        ]}
+        nestedScrollEnabled
+        scrollEnabled
+        showsVerticalScrollIndicator={false}
+      >
         <Image source={require("../images/4.png")} style={styles.middleBookImage} />
         <View style={styles.bookDetailContainer}>
-          <View style={styles.nameContainer} />
-          <View style={styles.explainContainer} />
+          <View style={styles.nameContainer}>
+            <View style={styles.nameTextBox}>
+              <Text style={styles.nameText}>Yves Saint Laurent</Text>
+            </View>
+            <View style={styles.authorTextBox}>
+              <Text style={styles.authorText}>Suzy Menkes</Text>
+            </View>
+            <View style={styles.ratingRow}>
+              <View style={styles.starContainer}>
+                <Image source={require("../images/icon_star_filled.png")} style={styles.starIcon} />
+                <Image source={require("../images/icon_star_filled.png")} style={styles.starIcon} />
+                <Image source={require("../images/icon_star_filled.png")} style={styles.starIcon} />
+                <Image source={require("../images/icon_star_filled.png")} style={styles.starIcon} />
+                <Image source={require("../images/icon_star_empty.png")} style={styles.starIcon} />
+              </View>
+              <Text style={styles.ratingText}>4.0 / 5.0</Text>
+            </View>
+          </View>
+          <View style={styles.explainContainer}>
+            <View style={styles.explainTextBox}>
+              <Text style={styles.explainText}>
+                A spectacular visual journey through 40 years of haute couture from one of the
+                best-known and most trend-setting brands in fashion.
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
+        <Pressable style={({ pressed }) => [styles.buyButton, pressed && styles.buyButtonPressed]}>
+          <Text style={styles.buyButtonText}>BUY NOW FOR $46.99</Text>
+        </Pressable>
+        <View style={styles.scrollSpacer} />
+      </ScrollView>
 
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
@@ -151,7 +189,12 @@ const styles = StyleSheet.create({
   middleContainer: {
     flex: 1,
     backgroundColor: "#ffffff",
+  },
+  middleContent: {
     alignItems: "center",
+  },
+  scrollSpacer: {
+    height: 80,
   },
   middleBookImage: {
     width: 210,
@@ -166,19 +209,109 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     height: 164,
     alignSelf: "stretch",
-    backgroundColor: "#000000",
     justifyContent: "flex-end",
   },
   explainContainer: {
-    //底下的解釋區域 綠色區塊
+    //底下的解釋區域
     height: 72,
-    backgroundColor: "#00aa00",
+    justifyContent: "center",
+  },
+  explainTextBox: {
+    paddingHorizontal: 8,
+  },
+  explainText: {
+    fontFamily: "Roboto",
+    fontWeight: "400",
+    fontStyle: "normal",
+    fontSize: 14,
+    lineHeight: 24,
+    letterSpacing: 0.17,
+    textAlign: "center",
+    color: "#131313",
   },
   nameContainer: {
     //底下的名稱區域 紫色區塊
     height: 76,
     marginBottom: 16,
-    backgroundColor: "#6a00ff",
+    gap: 8,
+    justifyContent: "flex-start",
+  },
+  nameTextBox: {
+    alignSelf: "stretch",
+  },
+  nameText: {
+    fontFamily: "Roboto",
+    fontWeight: "500",
+    fontStyle: "normal",
+    fontSize: 24,
+    lineHeight: 28,
+    letterSpacing: 0.3,
+    textAlign: "center",
+    alignItems: "center",
+    color: "#131313",
+  },
+  authorTextBox: {
+    alignSelf: "stretch",
+  },
+  authorText: {
+    fontFamily: "Roboto",
+    fontWeight: "400",
+    fontStyle: "normal",
+    fontSize: 14,
+    lineHeight: 16,
+    letterSpacing: 0.17,
+    textAlign: "center",
+    textAlignVertical: "center",
+    color: "#131313",
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  starContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    height: 16,
+    gap: 2,
+  },
+  starIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: "contain",
+  },
+  ratingText: {
+    fontFamily: "Roboto",
+    fontWeight: "400",
+    fontStyle: "normal",
+    fontSize: 14,
+    lineHeight: 16,
+    letterSpacing: 0.17,
+    color: "#131313",
+  },
+  buyButton: {
+    marginTop: 28,
+    width: 190,
+    height: 36,
+    borderRadius: 4,
+    backgroundColor: "#5a30d6",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buyButtonPressed: {
+    opacity: 0.9,
+  },
+  buyButtonText: {
+    fontFamily: "Roboto",
+    fontWeight: "500",
+    fontStyle: "normal",
+    fontSize: 14,
+    lineHeight: 16,
+    letterSpacing: 0.3,
+    textAlign: "center",
+    color: "#ffffff",
   },
   bottomBar: {
     flexDirection: "row",
