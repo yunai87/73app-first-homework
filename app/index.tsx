@@ -10,6 +10,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabKey = "home" | "bookmark" | "mybook";
+type TopNavAction = "menu" | "search";
 
 const navIconMap: Record<
   TabKey,
@@ -38,19 +39,49 @@ export default function Index() {
     setActiveTab(tab);
   };
 
+  const handleTopNavPress = (action: TopNavAction) => {
+    if (action === "menu") {
+      return;
+    }
+
+    return;
+  };
+
   const getNavIconSource = (tab: TabKey) => {
     return activeTab === tab ? navIconMap[tab].active : navIconMap[tab].default;
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>首頁內容區</Text>
+      <View style={[styles.topNavBar, { paddingTop: insets.top }]}>
+        <View style={styles.topNavInner}>
+          <Pressable
+            style={({ pressed }) => [styles.topNavButton, pressed && styles.topNavButtonPressed]}
+            onPress={() => handleTopNavPress("menu")}
+          >
+            <Image source={require("../images/icon_menu.png")} style={styles.topNavIcon} />
+          </Pressable>
+          <View style={styles.topNavSpacer} />
+          <Pressable
+            style={({ pressed }) => [styles.topNavButton, pressed && styles.topNavButtonPressed]}
+            onPress={() => handleTopNavPress("search")}
+          >
+            <Image source={require("../images/icon_search.png")} style={styles.topNavIcon} />
+          </Pressable>
+        </View>
+      </View>
+
+      <View style={styles.middleContainer}>
+        <View style={styles.content}>
+          <View style={styles.textBox}>
+            <Text style={styles.title}>Popular Books</Text>
+          </View>
+        </View>
       </View>
 
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
-          style={styles.navItem}
+          style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
           onPress={() => handleNavPress("home")}
           hitSlop={navHitSlop}
         >
@@ -58,7 +89,7 @@ export default function Index() {
           <Text style={[styles.navLabel, activeTab === "home" && styles.navLabelActive]}>Home</Text>
         </Pressable>
         <Pressable
-          style={styles.navItem}
+          style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
           onPress={() => handleNavPress("bookmark")}
           hitSlop={navHitSlop}
         >
@@ -68,7 +99,7 @@ export default function Index() {
           </Text>
         </Pressable>
         <Pressable
-          style={styles.navItem}
+          style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
           onPress={() => handleNavPress("mybook")}
           hitSlop={navHitSlop}
         >
@@ -85,19 +116,58 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: "#ffffff",
+  },
+  topNavBar: {
+    backgroundColor: "#ffffff",
+  },
+  topNavInner: {
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    borderBottomColor: "#dddddd",
+  },
+  topNavButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+  },
+  topNavButtonPressed: {
+    opacity: 0.6,
+  },
+  topNavSpacer: {
+    flex: 1,
+  },
+  topNavIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
+  },
+  middleContainer: {
+    flex: 1,
   },
   content: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignItems: "stretch",
+    paddingTop: 8,
+    paddingHorizontal: 20,
+    gap: 16,
+  },
+  textBox: {
+    padding: 0,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#222222",
+    fontSize: 24,
+    fontWeight: "500",
+    fontFamily:"Roboto",
+    color: "#333333",
   },
   bottomBar: {
+    
     flexDirection: "row",
     borderTopWidth: 1,
     borderTopColor: "#dddddd",
@@ -105,6 +175,7 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingHorizontal: 10,
     justifyContent: "space-around",
+    
   },
   navItem: {
     flex: 1,
@@ -112,14 +183,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: "center",
   },
+  navItemPressed: {
+    opacity: 0.7,
+  },
   navIcon: {
-    width: 24,
-    height: 24,
+    width: 25,
+    height: 25,
     resizeMode: "contain",
   },
   navLabel: {
     marginTop: 4,
-    fontSize: 12,
+    fontSize: 16,
     color: "#777777",
   },
   navLabelActive: {
