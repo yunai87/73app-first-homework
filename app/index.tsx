@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Image,
@@ -57,7 +58,38 @@ const popularBooks: Array<{
   },
 ];
 
+const newestBooks: Array<{
+  id: string;
+  title: string;
+  author: string;
+  cover: ImageSourcePropType;
+  rating: number;
+}> = [
+  {
+    id: "new-book-1",
+    title: "Yves Saint Laurent",
+    author: "Suzy Menkes",
+    cover: require("../images/4.png"),
+    rating: 4,
+  },
+  {
+    id: "new-book-2",
+    title: "The Book of Signs",
+    author: "Rudolf Koch",
+    cover: require("../images/5.png"),
+    rating: 3,
+  },
+  {
+    id: "new-book-3",
+    title: "Stitched Up",
+    author: "Tansy E. Hoskins",
+    cover: require("../images/6.png"),
+    rating: 3,
+  },
+];
+
 export default function Index() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const navHitSlop = 10;
@@ -98,14 +130,22 @@ export default function Index() {
         </View>
       </View>
 
-      <View style={styles.middleContainer}>
-        <View style={styles.content}>
+      <ScrollView
+        style={styles.middleContainer}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: Math.max(insets.bottom + 96, 120) },
+        ]}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+      >
           <View style={styles.textBox_1}>
             <Text style={styles.title}>Popular Books</Text>
           </View>
           <View style={styles.bookcontainer_1}>
             <ScrollView
               horizontal
+              nestedScrollEnabled
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.bookListContent}
             >
@@ -115,7 +155,7 @@ export default function Index() {
                   style={[styles.bookCard, index === popularBooks.length - 1 && styles.bookCardLast]}
                 >
                   <Image source={book.cover} style={styles.bookCover} />
-                  <Text style={styles.bookTitle} numberOfLines={1}>
+                  <Text style={styles.bookTitle_1} numberOfLines={1}>
                     {book.title}
                   </Text>
                   <Text style={styles.bookAuthor} numberOfLines={1}>
@@ -129,10 +169,44 @@ export default function Index() {
             <Text style={styles.title}>Newest</Text>
           </View>
           <View style={styles.bookcontainer_2}>
-            {/* Add your content here */}
+            <ScrollView
+              horizontal
+              nestedScrollEnabled
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.bookListContent}
+            >
+              {newestBooks.map((book, index) => (
+                <Pressable
+                  key={book.id}
+                  onPress={index === 0 ? () => router.push("/pinkbook") : undefined}
+                  disabled={index !== 0}
+                  style={[styles.bookCard, index === newestBooks.length - 1 && styles.bookCardLast]}
+                >
+                  <Image source={book.cover} style={styles.bookCover} />
+                  <View style={styles.starContainer}>
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <Image
+                        key={`${book.id}-newest-star-${starIndex}`}
+                        source={
+                          starIndex < book.rating
+                            ? require("../images/icon_star_filled.png")
+                            : require("../images/icon_star_empty.png")
+                        }
+                        style={styles.starIcon}
+                      />
+                    ))}
+                  </View>
+                  <Text style={styles.bookTitle_2} numberOfLines={1}>
+                    {book.title}
+                  </Text>
+                  <Text style={styles.bookAuthor} numberOfLines={1}>
+                    {book.author}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
           </View>
-        </View>
-      </View>
+      </ScrollView>
 
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
@@ -205,13 +279,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flex: 1,
-    justifyContent: "flex-start",
+    paddingTop: 16,
     alignItems: "stretch",
     gap: 16,
   },
   textBox_1: {
-    marginTop: 8,
     marginHorizontal: 20,
   },
   textBox_2: {
@@ -225,16 +297,15 @@ const styles = StyleSheet.create({
     color: "#333333",
   },
   bookcontainer_1: {
-    height: 256,
+    height: 270,
   },
   bookListContent: {
     paddingHorizontal: 20,
   },
   bookCard: {
     width: 140,
-    height: 256,
+    height: 270,
     borderRadius: 8,
-    padding: 8,
     marginRight: 16,
   },
   bookCardLast: {
@@ -242,25 +313,49 @@ const styles = StyleSheet.create({
   },
   bookCover: {
     width: "100%",
-    height: 192,
+    height: 200,
     borderRadius: 6,
   },
-  bookTitle: {
+  bookTitle_1: {
+    lineHeight: 18,
+    height: 18,
     marginTop: 16,
     fontSize: 16,
     fontWeight: "500",
     color: "#131313",
   },
+  bookTitle_2: {
+    lineHeight: 18,
+    height: 18,
+    marginTop: 0,
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#131313",
+  },
+  starContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 16,
+    marginBottom: 8,
+    height: 14,
+    gap: 4,
+  },
+  starIcon: {
+    width: 14,
+    height: 14,
+    resizeMode: "contain",
+  },
   bookAuthor: {
+    lineHeight: 15,
+    height: 15,
     marginTop: 8,
     fontSize: 12,
     opacity: 0.5,
-    color: "#777777",
+    color: "#131313",
     fontWeight: "500",
   },
   bookcontainer_2: {
-    height: 279,
-    backgroundColor: "#00ff00",
+    height: 279
   },
   bottomBar: {
     

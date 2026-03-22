@@ -21,6 +21,7 @@ export default function RootLayout() {
       {/* 你的頁面導航 */}
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="pinkbook" />
       </Stack>
     </>
   );
