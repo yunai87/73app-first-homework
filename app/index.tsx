@@ -1,8 +1,11 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
+  Animated,
+  Dimensions,
   Image,
   ImageSourcePropType,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -13,6 +16,30 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabKey = "home" | "bookmark" | "mybook";
 type TopNavAction = "menu" | "search";
+
+const HAMBURGER_WIDTH = Math.min(Dimensions.get("window").width * 0.78, 320);
+
+const HAMBURGERMenuItems: Array<{
+  key: string;
+  label: string;
+  icon: ImageSourcePropType;
+}> = [
+  {
+    key: "home",
+    label: "Home",
+    icon: require("../images/icon_home.png"),
+  },
+  {
+    key: "account",
+    label: "Account",
+    icon: require("../images/icon_account.png"),
+  },
+  {
+    key: "setting",
+    label: "Setting",
+    icon: require("../images/icon_settings.png"),
+  },
+];
 
 const navIconMap: Record<
   TabKey,
@@ -92,7 +119,31 @@ export default function Index() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<TabKey>("home");
+  const [isHAMBURGERVisible, setIsHAMBURGERVisible] = useState(false);
+  const HAMBURGERTranslateX = useRef(new Animated.Value(-HAMBURGER_WIDTH)).current;
   const navHitSlop = 10;
+
+  const openHAMBURGER = () => {
+    setIsHAMBURGERVisible(true);
+    HAMBURGERTranslateX.setValue(-HAMBURGER_WIDTH);
+    Animated.timing(HAMBURGERTranslateX, {
+      toValue: 0,
+      duration: 220,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeHAMBURGER = () => {
+    Animated.timing(HAMBURGERTranslateX, {
+      toValue: -HAMBURGER_WIDTH,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) {
+        setIsHAMBURGERVisible(false);
+      }
+    });
+  };
 
   const handleNavPress = (tab: TabKey) => {
     setActiveTab(tab);
@@ -100,6 +151,7 @@ export default function Index() {
 
   const handleTopNavPress = (action: TopNavAction) => {
     if (action === "menu") {
+      openHAMBURGER();
       return;
     }
 
@@ -112,6 +164,46 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
+      <Modal
+        transparent
+        visible={isHAMBURGERVisible}
+        animationType="none"
+        onRequestClose={closeHAMBURGER}
+      >
+        <View style={styles.HAMBURGERModalRoot}>
+          <Pressable style={styles.HAMBURGEROverlay} onPress={closeHAMBURGER} />
+          <Animated.View
+            style={[
+              styles.HAMBURGERPanel,
+              {
+                paddingTop: insets.top + 24,
+                transform: [{ translateX: HAMBURGERTranslateX }],
+              },
+            ]}
+          >
+            <View style={styles.HAMBURGERProfileSection}>
+              <Image source={require("../images/May.jpg")} style={styles.HAMBURGERAvatar} />
+              <Text style={styles.HAMBURGERName}>May</Text>
+            </View>
+            <View style={styles.HAMBURGERMenuSection}>
+              {HAMBURGERMenuItems.map((item) => (
+                <Pressable
+                  key={item.key}
+                  style={({ pressed }) => [
+                    styles.HAMBURGERMenuItem,
+                    pressed && styles.HAMBURGERMenuItemPressed,
+                  ]}
+                  onPress={closeHAMBURGER}
+                >
+                  <Image source={item.icon} style={styles.HAMBURGERMenuIcon} />
+                  <Text style={styles.HAMBURGERMenuLabel}>{item.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
+
       <View style={[styles.topNavBar, { paddingTop: insets.top }]}>
         <View style={styles.topNavInner}>
           <Pressable
@@ -249,6 +341,7 @@ const styles = StyleSheet.create({
   },
   topNavBar: {
     backgroundColor: "#ffffff",
+    zIndex: 1,
   },
   topNavInner: {
     height: 56,
@@ -274,6 +367,66 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     resizeMode: "contain",
+  },
+  HAMBURGERModalRoot: {
+    flex: 1,
+  },
+  HAMBURGEROverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+  },
+  HAMBURGERPanel: {
+    width: HAMBURGER_WIDTH,
+    height: "100%",
+    backgroundColor: "#ffffff",
+    borderRightWidth: 1,
+    borderRightColor: "#e4e4e4",
+  },
+  HAMBURGERProfileSection: {
+    height: 190,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ececec",
+  },
+  HAMBURGERAvatar: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+  },
+  HAMBURGERName: {
+    marginTop: 18,
+    fontSize: 24,
+    color: "#1f1f1f",
+    fontWeight: "600",
+    lineHeight: 28,
+  },
+  HAMBURGERMenuSection: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ececec",
+    paddingVertical: 10,
+  },
+  HAMBURGERMenuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 22,
+    gap: 18,
+  },
+  HAMBURGERMenuItemPressed: {
+    opacity: 0.6,
+  },
+  HAMBURGERMenuIcon: {
+    width: 24,
+    height: 56,
+    resizeMode: "contain",
+    opacity: 0.58,
+  },
+  HAMBURGERMenuLabel: {
+    fontSize: 24,
+    color: "#6e6e6e",
+    fontWeight: "500",
+    lineHeight: 36,
   },
   middleContainer: {
     flex: 1,
@@ -392,3 +545,4 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
